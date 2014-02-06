@@ -101,6 +101,20 @@ public class GHOrganization extends GHPerson {
             }
         };
     }
+    
+    public PagedIterable<GHUser> getAllMembers() throws IOException {
+        return new PagedIterable<GHUser>() {
+            public PagedIterator<GHUser> iterator() {
+                return new PagedIterator<GHUser>(root.retrieve().asIterator(String.format("/orgs/%s/members", login), GHUser[].class)) {
+                    @Override
+                    protected void wrapUp(GHUser[] page) {
+                        for (GHUser c : page)
+                            c.wrapUp(root);
+                    }
+                };
+            }
+        };
+    }
 
     /**
      * Conceals the membership.
